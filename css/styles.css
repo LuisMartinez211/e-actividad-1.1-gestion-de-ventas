@@ -253,3 +253,41 @@ body {
     margin: 0 10px;
     transition: background-color 0.3s;
 }
+
+/* barra de buscar */
+
+
+/* Estilos para el Campo de Búsqueda */
+.busquedaNombre {
+    width: 60%; 
+    padding: 10px 15px; 
+    font-size: 1em; 
+    border: 1px solid #ccc; 
+    border-radius: 25px; 
+    outline: none; 
+    transition: all 0.3s ease-in-out; 
+}
+
+
+.busquedaNombre:focus {
+    border-color: #333; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+}
+
+/* Estilos para el Botón de Buscar */
+.botonBuscar {
+    padding: 10px 25px; 
+    font-size: 1em; 
+    background-color: #4CAF50; 
+    color: white; 
+    border: none; 
+    border-radius: 25px; 
+    cursor: pointer; 
+    margin-left: 10px; 
+    transition: background-color 0.3s ease-in-out; 
+}
+
+
+.botonBuscar:hover {
+    background-color: #45a049;
+}

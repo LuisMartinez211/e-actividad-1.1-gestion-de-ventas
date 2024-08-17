@@ -2,6 +2,7 @@ const almacen = [
     {
         id:1,
         nombre:'camisa',
+        img:'./img/camisa.webp',
         marca:'polo',
         categoria:'ropa',
         descripcion:'camisa manga corta',
@@ -19,6 +20,8 @@ const vender = document.getElementById('vender')
 const inicio = document.getElementById('inicio')
 const formulario = document.getElementById('formulario')
 const btnAcecptarMensaje = document.getElementById('botonAceptarMensaje')
+const botonBuscar = document.getElementById('botonBuscar');
+const busquedaNombre = document.getElementById('busquedaNombre');
 
 
 inicio.addEventListener('click',clickInicio)
@@ -26,6 +29,7 @@ comprar.addEventListener('click',clickVender)
 comprarNav.addEventListener('click',clickVender)
 venderNav.addEventListener('click', mostrarProductos)
 vender.addEventListener('click', mostrarProductos)
+botonBuscar.addEventListener('click', buscarProducto);
 
 formulario.addEventListener('submit', function(event){
 
@@ -207,6 +211,77 @@ function editarProducto(id) {
     }
 }
 
+
+function buscarProducto() {
+    const nombreBuscado = busquedaNombre.value.toLowerCase(); // Convierte a minúsculas para hacer la búsqueda insensible a mayúsculas/minúsculas
+    catalogoProductos.innerHTML = ''; // Limpia el catálogo de productos
+
+    const productosFiltrados = almacen.filter(art => art.nombre.toLowerCase().includes(nombreBuscado));
+
+    if (productosFiltrados.length > 0) {
+        productosFiltrados.forEach(art => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.id = `card${art.id}`;
+
+            const cardImg = document.createElement('img');
+            cardImg.className = 'card img';
+            cardImg.src = art.img;  
+            cardImg.alt = art.nombre; 
+
+            const cardBody = document.createElement('div');
+            cardBody.className = 'card-body';
+
+            const titulo = document.createElement('h3');
+            titulo.className = 'card-title';
+            titulo.textContent = art.nombre;
+
+            const marca = document.createElement('p');
+            marca.textContent = art.marca;
+
+            const categoria = document.createElement('p');
+            categoria.textContent = art.categoria;
+
+            const descripcion = document.createElement('p');
+            descripcion.className = 'card-text';
+            descripcion.textContent = art.descripcion;
+
+            const precio = document.createElement('p');
+            descripcion.className = 'card-price';
+            precio.textContent = `Precio: $${art.precio} - Stock: ${art.stock}`;
+
+            const botonEliminar = document.createElement('button');
+            botonEliminar.textContent = 'Eliminar';
+            botonEliminar.className = 'botonEliminar';
+            botonEliminar.onclick = () => {
+                eliminarProducto(art.id);
+            }
+
+            const botonEditar = document.createElement('button');
+            botonEditar.textContent = 'Editar';
+            botonEditar.className = 'botonEditar';
+            botonEditar.onclick = () => {
+                editarProducto(art.id);
+            }
+
+            cardBody.appendChild(titulo);
+            cardBody.appendChild(cardImg);
+            cardBody.appendChild(marca);
+            cardBody.appendChild(categoria);
+            cardBody.appendChild(descripcion);
+            cardBody.appendChild(precio);
+            cardBody.appendChild(botonEliminar);
+            cardBody.appendChild(botonEditar);
+            card.appendChild(cardBody);
+            catalogoProductos.appendChild(card);
+        });
+    } else {
+        // Si no se encuentran productos, muestra un mensaje
+        const mensajeNoEncontrado = document.createElement('p');
+        mensajeNoEncontrado.textContent = 'No se encontraron productos con ese nombre.';
+        catalogoProductos.appendChild(mensajeNoEncontrado);
+    }
+}
 
 /*function eliminarProducto(id){
     console.log(id);
