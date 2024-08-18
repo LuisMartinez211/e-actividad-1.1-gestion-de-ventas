@@ -22,6 +22,9 @@ const inicio = document.getElementById('inicio');
 const formulario = document.getElementById('formulario');
 const botonBuscar = document.getElementById('botonBuscar');
 const busquedaNombre = document.getElementById('busquedaNombre');
+const inputImagen = document.getElementById('imagen'); 
+const seccionBuscar = document.getElementById('seccionBuscar')
+const f = document.getElementById('f')
 
 inicio.addEventListener('click', clickInicio);
 comprar.addEventListener('click', clickVender);
@@ -30,26 +33,48 @@ venderNav.addEventListener('click', mostrarProductos);
 vender.addEventListener('click', mostrarProductos);
 botonBuscar.addEventListener('click', buscarProducto);
 
+f.style.display = 'none'
+seccionBuscar.style.display = 'none'
+
 formulario.addEventListener('submit', function (event) {
     event.preventDefault();
 
     const nuevoId = obtenerSiguienteId();
     const formData = new FormData(formulario);
     const newData = { id: nuevoId };
+
     formData.forEach((value, key) => {
         newData[key] = value;
     });
 
-    almacen.push(newData);
+   
+    const archivoImagen = formData.get('imagen');
+    if (archivoImagen && archivoImagen.size > 0) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            newData.img = e.target.result; 
+            guardarProducto(newData);
+        };
+        reader.readAsDataURL(archivoImagen); 
+    } else {
+        newData.img = './img/placeholder.png'; 
+        guardarProducto(newData);
+    }
+});
+
+function guardarProducto(producto) {
+    almacen.push(producto);
     guardarAlmacen();
     mostrarMensaje('Se ha guardado exitosamente');
     mostrarProductos(); 
     formulario.reset();
-});
+}
 
 function mostrarProductos() {
     ocultarSeccionPrincipal();
     catalogoProductos.innerHTML = '';
+    seccionBuscar.style.display = 'block'
+    f.style.display = 'none'
 
     almacen.forEach(art => {
         const card = document.createElement('div');
@@ -98,19 +123,24 @@ function mostrarProductos() {
         card.appendChild(cardBody);
         catalogoProductos.appendChild(card);
     });
-
-    formulario.style.display = 'none';
+    
+    //formulario.style.display = 'none';
 }
 
 function clickVender() {
     ocultarSeccionPrincipal();
     catalogoProductos.innerHTML = '';
+    f.style.display = 'block'
     formulario.style.display = 'block';
+    seccionBuscar.style.display = 'none'
 }
 
 function clickInicio() {
     document.getElementById('seccionPrincipal').style.display = 'block';
     catalogoProductos.innerHTML = '';
+    seccionBuscar.style.display = 'none';
+    f.style.display = 'none'
+    
 }
 
 function ocultarSeccionPrincipal() {
@@ -141,15 +171,15 @@ function eliminarProducto(id) {
     if (indice !== -1) {
         almacen.splice(indice, 1);
         guardarAlmacen();
-        mostrarProductos(); // Actualiza la vista después de eliminar un producto
+        mostrarProductos(); 
         mostrarMensaje('Producto eliminado exitosamente');
     }
 }
 
 function editarProducto(id) {
+    f.style.display = 'block'
     const producto = almacen.find(art => art.id === id);
     if (producto) {
-        
         formulario.style.display = 'block';
         document.getElementById('nombre').value = producto.nombre;
         document.getElementById('marca').value = producto.marca;
@@ -157,6 +187,8 @@ function editarProducto(id) {
         document.getElementById('descripcion').value = producto.descripcion;
         document.getElementById('stock').value = producto.stock;
         document.getElementById('precio').value = producto.precio;
+
+
 
         document.getElementById('botonSubmit').textContent = 'Guardar Cambios';
 
@@ -176,11 +208,10 @@ function editarProducto(id) {
             formulario.reset();
             formulario.style.display = 'none';
             document.getElementById('botonSubmit').textContent = 'Añadir Producto';
-            eliminarProducto(producto.id)
+           
+            eliminarProducto(producto.id);
         };
     }
-
-    
 }
 
 function buscarProducto() {
@@ -257,4 +288,3 @@ function buscarProducto() {
 function guardarAlmacen() {
     localStorage.setItem('almacen', JSON.stringify(almacen));
 }
-
